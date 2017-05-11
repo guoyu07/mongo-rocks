@@ -59,7 +59,6 @@
 #include "mongo/db/operation_context.h"
 #include "mongo/db/server_parameters.h"
 #include "mongo/db/storage/journal_listener.h"
-#include "mongo/platform/endian.h"
 #include "mongo/stdx/memory.h"
 #include "mongo/util/background.h"
 #include "mongo/util/log.h"
@@ -114,14 +113,6 @@ namespace mongo {
         RocksDurabilityManager* _durabilityManager;  // not owned
         std::atomic<bool> _shuttingDown{false};      // NOLINT
     };
-
-    namespace {
-        std::string encodePrefix(uint32_t prefix) {
-            uint32_t bigEndianPrefix = endian::nativeToBig(prefix);
-            return std::string(reinterpret_cast<const char*>(&bigEndianPrefix), sizeof(uint32_t));
-        }
-
-    }  // anonymous namespace
 
     // first four bytes are the default prefix 0
     const std::string RocksEngine::kMetadataPrefix("\0\0\0\0metadata-", 12);
